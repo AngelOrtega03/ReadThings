@@ -12,12 +12,13 @@
         <p>Leo, luego existo</p>
     </div>
     <div class="formulario">
-        <form action="{{ url_for('login') }}" method="post">
-            <div class="msg">{{ msg }}</div>
-            <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox"/></br></br>
-            <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/></br></br></br>
-            <input type="submit" class="btn" value="Sign In"></br></br>
+        <form action="{{ url_for('login') }}" method="post"></br></br>
+            <input id="username" name="username" type="text" placeholder="Nombre de usuario" class="textbox"/></br></br>
+            <input id="password" name="password" type="password" placeholder="Contraseña" class="textbox"/></br></br></br>
+            <input type="submit" class="btn" value="Iniciar sesion"></br></br>
         </form>
+        <div class="msg">{{ msg }}}</div></br></br>
+        <p class="bottom">¿No tienes cuenta? <a href="">Haz click aqui</a></p>
     </div>
 </body>
 </html>
