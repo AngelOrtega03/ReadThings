@@ -20,13 +20,13 @@
     </nav>
     <br><br><br><h1>Recomendaciones</h1>
     {% for libro in recomendaciones %}
-    <div class="Publicacion">
+    <a href="{{ url_for('book', book_id = libro.codigo)}}"><div class="Publicacion">
         <p>Titulo: {{ libro.titulo }}</p>
         <p>Autor: {{ libro.autor }}</p>
         <p>Genero: {{ libro.genero }}</p>
         <p>Año de publicacion: {{ libro.fecha_publicacion }}</p>
         <p>Precio: ${{ libro.precio_unitario }}</p>
-    </div><br>
+    </div><br></a>
     {% endfor %}
 </body>
 </html>

@@ -17,6 +17,16 @@
         <li><a href="{{ url_for('profile') }}">Perfil</a></li>
         <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
     </ul>
-</nav>
+</nav><br><br><br>
+<h1>Ordenes</h1>
+{% for venta in ventas %}
+    <div class="Publicacion">
+        <p>No. Orden: {{ venta.no_venta }}</p>
+        <p>Titulo: {{ venta.titulo }}</p>
+        <p>Fecha de orden: {{ venta.fecha_venta }}</p>
+        <p>Cantidad: {{ venta.cantidad }}</p>
+        <p>Total: ${{ venta.total }}</p>
+    </div><br>
+{% endfor %}
 </body>
 </html>

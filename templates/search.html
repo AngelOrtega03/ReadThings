@@ -20,24 +20,24 @@
         </ul>
     </nav>
     <br><br><br><br><br><form action="{{ url_for('searching') }}" method="POST">
-        <input id="Search" name="Searchbar" type="text" placeholder="¿Que desea buscar?" class="textbox">
-        <input type="radio" id="titulo" name="search_for" value="titulo">
+        <input id="Search" name="Searchbar" type="text" placeholder="¿Que desea buscar?" class="textbox" required>
+        <input type="radio" id="titulo" name="search_for" value="titulo" required>
         <label for="titulo">Titulo</label><br>
-        <input type="radio" id="autor" name="search_for" value="autor">
+        <input type="radio" id="autor" name="search_for" value="autor" required>
         <label for="autor">Autor</label><br>
-        <input type="radio" id="genero" name="search_for" value="genero">
+        <input type="radio" id="genero" name="search_for" value="genero" required>
         <label for="genero">Genero</label><br>
-        <input type="radio" id="isbn" name="search_for" value="codigo">
+        <input type="radio" id="isbn" name="search_for" value="codigo" required>
         <label for="isbn">ISBN</label><br>
         <input type="submit" name="" value="Buscar">
     </form><br>
     {% for libro in busqueda %}
-    <div class="Publicacion">
+    <a href="{{ url_for('book', book_id = libro.codigo)}}"><div class="Publicacion">
         <p>Titulo: {{ libro.titulo }}</p>
         <p>Autor: {{ libro.autor }}</p>
         <p>Genero: {{ libro.genero }}</p>
         <p>Año de publicacion: {{ libro.fecha_publicacion }}</p>
-        <p>Precio: ${{ libro.precio_unitario }}</p>
+        <p>Precio: ${{ libro.precio_unitario }}</p></a>
     </div><br>
     {% endfor %}
 </body>

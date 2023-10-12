@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ book_name }}</title>
+    <title>{{ info.titulo }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles2.css') }}">
 </head>
@@ -17,6 +17,15 @@
             <li><a href="{{ url_for('profile') }}">Perfil</a></li>
             <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
         </ul>
-    </nav>
+    </nav><br><br><br>
+    <div class="Publicacion">
+        <p>Titulo: {{ info.titulo }}</p>
+        <p>Autor: {{ info.autor }}</p>
+        <p>Genero: {{ info.genero }}</p>
+        <p>Año de publicacion: {{ info.fecha_publicacion }}</p>
+        <p>Fecha de ingreso: {{ info.fecha_publicacion }}</p>
+        <p>Cantidad: {{ info.cantidad }}</p>
+        <p>Precio: ${{ info.precio_unitario }}</p>
+    </div><br>
 </body>
 </html>
