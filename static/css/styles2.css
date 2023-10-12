@@ -500,6 +500,7 @@ h1, p {
     margin: auto;
     border: gray solid 3px;
     text-align: justify;
+    border-radius: 25px;
 }
 
 .Publicacion p {
