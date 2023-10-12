@@ -489,3 +489,20 @@ h1, p {
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
 }
+
+.Publicacion {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+    background-color: white;
+    width: 50%;
+    margin: auto;
+    border: gray solid 3px;
+    text-align: justify;
+}
+
+.Publicacion p {
+    color: black;
+    text-align: justify;
+}

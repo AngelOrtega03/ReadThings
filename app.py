@@ -75,7 +75,12 @@ def home():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
-		return render_template('home.html')
+		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+		#cursor.execute('SELECT (titulo, autor, genero, fecha_publicacion, precio) FROM articulo WHERE genero = (SELECT genero FROM articulo WHERE codigo = (SELECT no_articulo FROM venta WHERE no_cliente = % s LIMIT 1))', (session['idUsuario'], ))
+		cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo')
+		data = cursor.fetchall()
+		print(data)
+		return render_template('home.html', recomendaciones = data)
 	
 @app.route('/profile', methods = ['GET', 'POST'])
 def profile():
