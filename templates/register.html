@@ -12,7 +12,7 @@
     <p>Leo, luego existo</p>
 </div>
 <div class="formulario">
-    <form action="{{ url_for('login') }}" method="post"></br></br>
+    <form action="{{ url_for('register') }}" method="post"></br></br>
         <input id="firstname" name="username" type="text" placeholder="Nombre" class="textbox required"/></br></br>
         <input id="lastname" name="username" type="text" placeholder="Apellido" class="textbox required"/></br></br>
         <input id="username" name="username" type="text" placeholder="Nombre de usuario" class="textbox required"/></br></br>
@@ -20,7 +20,7 @@
         <input id="password" name="password" type="password" placeholder="Contraseña" class="textbox required"/></br></br></br>
         <input type="submit" class="btn" value="Registrarme"></br></br>
     </form>
-    <div class="msg">{{ msg }}}</div></br></br>
+    <div class="msg">{{ msg }}</div></br></br>
     <p class="bottom">¿Ya tienes cuenta? <a href="">Haz click aqui</a></p>
 </div>
 </body>
