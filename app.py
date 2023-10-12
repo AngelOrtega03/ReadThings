@@ -79,7 +79,6 @@ def home():
 		#cursor.execute('SELECT (titulo, autor, genero, fecha_publicacion, precio) FROM articulo WHERE genero = (SELECT genero FROM articulo WHERE codigo = (SELECT no_articulo FROM venta WHERE no_cliente = % s LIMIT 1))', (session['idUsuario'], ))
 		cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo')
 		data = cursor.fetchall()
-		print(data)
 		return render_template('home.html', recomendaciones = data)
 	
 @app.route('/profile', methods = ['GET', 'POST'])
@@ -143,7 +142,13 @@ def search():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
-		return render_template('search.html')
+		if request.method == 'POST' and 'Searchbar' in request.form and 'search_for' in request.form:
+			value = request.form['Searchbar']
+			parameter = request.form['search_for']
+			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE % s = % s', (parameter, value, ))
+			datos = cursor.fetchall()
+		return render_template('search.html', busqueda = datos)
 
 @app.route('/book/<book_id>', methods = ['GET', 'POST'])
 def book():

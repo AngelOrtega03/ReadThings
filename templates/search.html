@@ -19,9 +19,26 @@
             <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
         </ul>
     </nav>
-    <br><br><br><br><br><form>
+    <br><br><br><br><br><form action="{{ url_for('search') }}" method="post">
         <input id="Search" name="Searchbar" type="text" placeholder="¿Que desea buscar?" class="textbox">
+        <input type="radio" id="titulo" name="search_for" value="titulo">
+        <label for="titulo">Titulo</label><br>
+        <input type="radio" id="autor" name="search_for" value="autor">
+        <label for="autor">Autor</label><br>
+        <input type="radio" id="genero" name="search_for" value="genero">
+        <label for="genero">Genero</label><br>
+        <input type="radio" id="isbn" name="search_for" value="codigo">
+        <label for="isbn">ISBN</label><br>
         <input type="submit" name="" value="Buscar">
     </form>
+    {% for libro in busqueda %}
+    <div class="Publicacion">
+        <p>Titulo: {{ libro.titulo }}</p>
+        <p>Autor: {{ libro.autor }}</p>
+        <p>Genero: {{ libro.genero }}</p>
+        <p>Año de publicacion: {{ libro.fecha_publicacion }}</p>
+        <p>Precio: ${{ libro.precio_unitario }}</p>
+    </div><br>
+    {% endfor %}
 </body>
 </html>
