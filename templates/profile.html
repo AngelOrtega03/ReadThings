@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/styles2.css">
+    <link rel="stylesheet" href="../css/styles3.css">
+</head>
+<body>
+<div class="contaiener">
+    <nav>
+        <span class="logo"><i class='bx bx-home-heart'></i></span>
+        <button class="btn-menu"><i class='bx bx-menu'></i></button>
+        <ul class="menu-options">
+            <li><a href="{{ url_for('home') }}">Inicio</a></li>
+            <li>Buscar</a></li>
+            <li>Carrito</a></li>
+            <li>Perfil</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
+        </ul>
+    </nav>
+    <div class="title">Informacion del perfil</div>
+    <form method="POST" action="#">
+        <div class="user-details">
+            <div class="input-box">
+                <span clas="details">Nombre</span>
+                <input type="text" name="nombre" placeholder={{ session.nombre }} required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Apellidos</span>
+                <input type="text" name="apellido" placeholder={{ session.apellido }} required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Usario</span>
+                <input type="text" name="nombreusuario" placeholder= {{ session.nombreusuario }} required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Correo</span>
+                <input type="email" name="correo" placeholder= {{ session.correo }} required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Ingresa tu constraseña</span>
+                <input type="password" name="contrasenia1" placeholder="Contraseña" required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Confirma tu contraseña</span>
+                <input type="password" name="contrasenia2" placeholder="Confirmar contraseña" required>
+            </div>
+        </div>
+        <div class="boton1">
+            <input type="submit" name="" value="Confirmar">
+        </div>
+    </form>
+    <div class="msg">{{ msg }}</div>
+</div>
+</body>
+</html>
