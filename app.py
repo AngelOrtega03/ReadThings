@@ -79,10 +79,52 @@ def home():
 	
 @app.route('/profile', methods = ['GET', 'POST'])
 def profile():
+	msg = ''
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
-		return render_template('profile.html')
+		if request.method == 'POST' and 'nombre' in request.form and 'apellido' in request.form and 'correo' in request.form and 'nombreusuario' in request.form and 'contrasenia1' in request.form and 'contrasenia2' in request.form:
+			nombre = request.form['nombre']
+			apellido = request.form['apellido']
+			correo = request.form['correo']
+			nombreusuario = request.form['nombreusuario']
+			contrasenia1 = request.form['contrasenia1']
+			contrasenia2 = request.form['contrasenia2']
+			idActual = session['idUsuario']
+			
+			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+			cursor.execute('SELECT * FROM usuario WHERE username = % s and id <> % s', (nombreusuario, idActual, ))
+			account1 = cursor.fetchone()
+			cursor.execute('SELECT * FROM usuario WHERE nombre = % s and apellido = % s and id <> % s', (nombre, apellido, idActual, ))
+			account2 = cursor.fetchone()
+			cursor.execute('SELECT * FROM usuario WHERE correo = % s and id <> % s', (correo, idActual, ))
+			account3 = cursor.fetchone()
+			if account1:
+				msg = 'Este nombre de usuario ya existe !'
+			elif account2:
+				msg = 'Nombre y Apellidos ya existentes !'
+			elif account3:
+				msg = 'Correo ya existente !'
+			elif not re.match(r'[^@]+@[^@]+\.[^@]+', correo):
+				msg = 'Correo invalido !'
+			elif not re.match(r'[A-Za-z0-9]+', nombreusuario):
+				msg = 'El nombre de usuario solo debe contener letras y numeros !'
+			elif not re.match(r'[A-Za-z0-9]+', nombre):
+				msg = 'El nombre solo debe contener letras !'
+			elif not nombre or not apellido or not nombreusuario or not correo or not contrasenia1 or not contrasenia2:
+				msg = 'Por favor llene el formulario !'
+			elif contrasenia1 != contrasenia2:
+				msg = 'Contraseñas no coinciden !'
+			else:
+				cursor.execute('UPDATE usuario SET nombre = % s, apellido = % s, correo = % s, username = % s, contrasenia = % s WHERE id = % s', (nombre, apellido, correo, nombreusuario, contrasenia1, idActual, ))
+				mysql.connection.commit()
+				session['nombre'] = nombre
+				session['apellido'] = apellido
+				session['correo'] = correo
+				session['nombreusuario'] = nombreusuario
+		elif request.method == 'POST':
+			msg = 'No ha puesto nada para cambiar !'
+		return render_template('profile.html', msg = msg)
 	
 @app.route('/orders', methods = ['GET', 'POST'])
 def orders():
