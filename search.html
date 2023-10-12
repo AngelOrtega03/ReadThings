@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/styles2.css">
+    <link rel="stylesheet" href="css/styles4.css">
+</head>
+<body>
+    <nav>
+        <span class="logo"><i class='bx bx-home-heart'></i></span>
+        <button class="btn-menu"><i class='bx bx-menu'></i></button>
+        <ul class="menu-options">
+            <li><a href="{{ url_for('menu') }}">Inicio</a></li>
+            <li>Buscar</a></li>
+            <li>Carrito</a></li>
+            <li>Perfil</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
+        </ul>
+    </nav>
+    <br><br><br><br><br><form>
+        <input id="Search" name="Searchbar" type="text" placeholder="¿Que desea buscar?" class="textbox">
+        <input type="submit" name="" value="Buscar">
+    </form>
+</body>
+</html>
