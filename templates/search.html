@@ -19,7 +19,7 @@
             <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
         </ul>
     </nav>
-    <br><br><br><br><br><form action="{{ url_for('search') }}" method="post">
+    <br><br><br><br><br><form action="{{ url_for('searching') }}" method="POST">
         <input id="Search" name="Searchbar" type="text" placeholder="¿Que desea buscar?" class="textbox">
         <input type="radio" id="titulo" name="search_for" value="titulo">
         <label for="titulo">Titulo</label><br>
@@ -30,7 +30,7 @@
         <input type="radio" id="isbn" name="search_for" value="codigo">
         <label for="isbn">ISBN</label><br>
         <input type="submit" name="" value="Buscar">
-    </form>
+    </form><br>
     {% for libro in busqueda %}
     <div class="Publicacion">
         <p>Titulo: {{ libro.titulo }}</p>

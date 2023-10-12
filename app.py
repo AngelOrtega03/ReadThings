@@ -78,8 +78,8 @@ def home():
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 		#cursor.execute('SELECT (titulo, autor, genero, fecha_publicacion, precio) FROM articulo WHERE genero = (SELECT genero FROM articulo WHERE codigo = (SELECT no_articulo FROM venta WHERE no_cliente = % s LIMIT 1))', (session['idUsuario'], ))
 		cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo')
-		data = cursor.fetchall()
-		return render_template('home.html', recomendaciones = data)
+		home_data = cursor.fetchall()
+		return render_template('home.html', recomendaciones = home_data)
 	
 @app.route('/profile', methods = ['GET', 'POST'])
 def profile():
@@ -142,13 +142,26 @@ def search():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
-		if request.method == 'POST' and 'Searchbar' in request.form and 'search_for' in request.form:
-			value = request.form['Searchbar']
-			parameter = request.form['search_for']
-			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE % s = % s', (parameter, value, ))
-			datos = cursor.fetchall()
-		return render_template('search.html', busqueda = datos)
+		return render_template('search.html')
+		
+@app.route('/searching', methods = ['POST'])
+def searching():
+	if request.method == 'POST' and 'Searchbar' in request.form and 'search_for' in request.form:
+		value = request.form['Searchbar']
+		parameter = request.form['search_for']
+		print(parameter)
+		print(value)
+		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+		if parameter == 'titulo':
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE titulo = % s', (value, ))
+		elif parameter == 'autor':
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE autor = % s', (value, ))
+		elif parameter == 'genero':
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE genero = % s', (value, ))
+		elif parameter == 'codigo':
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE codigo = % s', (value, ))
+		search_data = cursor.fetchall()
+		return render_template('search.html', busqueda = search_data)
 
 @app.route('/book/<book_id>', methods = ['GET', 'POST'])
 def book():
