@@ -78,28 +78,28 @@ def home():
 		return render_template('home.html')
 	
 @app.route('/profile', methods = ['GET', 'POST'])
-def home():
+def profile():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
 		return render_template('profile.html')
 	
 @app.route('/orders', methods = ['GET', 'POST'])
-def home():
+def orders():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
 		return render_template('orders.html')
 	
 @app.route('/search', methods = ['GET', 'POST'])
-def home():
+def search():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
 		return render_template('search.html')
 
 @app.route('/book/<book_id>', methods = ['GET', 'POST'])
-def home():
+def book():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
