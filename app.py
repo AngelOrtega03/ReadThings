@@ -18,10 +18,7 @@ mysql = MySQL(app)
 
 @app.route('/')
 def inicio():
-	if 'loggedin' not in session:
-		return redirect(url_for('login'))
-	else:
-		return redirect(url_for('home'))
+	return redirect(url_for('login'))
 
 @app.route('/login', methods =['GET', 'POST'])
 def login():
