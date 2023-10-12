@@ -507,3 +507,7 @@ h1, p {
     color: black;
     text-align: justify;
 }
+
+.Publicacion img {
+    margin: auto;
+}

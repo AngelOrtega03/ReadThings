@@ -169,7 +169,7 @@ def searching():
 @app.route('/book/<book_id>', methods = ['GET', 'POST'])
 def book(book_id):
 	cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-	cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, fecha_ingreso, precio_unitario, cantidad FROM articulo WHERE codigo = % s', (book_id, ))
+	cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, fecha_ingreso, precio_unitario, cantidad, codigo FROM articulo WHERE codigo = % s', (book_id, ))
 	book_data = cursor.fetchone()
 	return render_template('book.html', info = book_data)
 
