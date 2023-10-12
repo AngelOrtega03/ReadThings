@@ -23,7 +23,7 @@ def inicio():
 @app.route('/login', methods =['GET', 'POST'])
 def login():
 	msg = ''
-	if request.method == 'POST' and 'correo' in request.form and 'contrasenia' in request.form:
+	if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
 		nombreusuario = request.form['username']
 		contrasenia = request.form['password']
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -44,7 +44,7 @@ def login():
 @app.route('/register', methods =['GET', 'POST'])
 def register():
 	msg = ''
-	if request.method == 'POST':
+	if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'username' in request.form and 'mail' in request.form and 'password' in request.form:
 		nombre = request.form['firstname']
 		apellido = request.form['lastname']
 		nombreusuario = request.form['username']
@@ -62,7 +62,7 @@ def register():
 		elif not re.match(r'[A-Za-z]+', nombre) or not re.match(r'[A-Za-z]+',apellido):
 			msg = 'El nombre y/o apellido solo debe contener letras !'
 		else:
-			cursor.execute('INSERT INTO usuario (nombre, apellido, username, correo, contrasenia) VALUES (% s, % s, % s, % s, % s)', (nombre, apellido, nombreusuario, correo, contrasenia))
+			cursor.execute('INSERT INTO usuario (nombre, apellido, username, correo, contrasenia) VALUES (% s, % s, % s, % s, % s)', (nombre, apellido, nombreusuario, correo, contrasenia, ))
 			mysql.connection.commit()
 			msg = 'Registro exitoso !'
 	return render_template('register.html', msg = msg)
