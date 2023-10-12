@@ -18,7 +18,10 @@ mysql = MySQL(app)
 
 @app.route('/')
 def inicio():
-	return redirect(url_for('login'))
+	if 'loggedin' not in session:
+		return redirect(url_for('login'))
+	else:
+		return redirect(url_for('home'))
 
 @app.route('/login', methods =['GET', 'POST'])
 def login():
@@ -70,9 +73,37 @@ def register():
 @app.route('/home', methods = ['GET', 'POST'])
 def home():
 	if 'loggedin' not in session:
-		return redirect(url_for('login', msg = 'Primero inicia sesion!'))
+		return redirect(url_for('login'))
 	else:
 		return render_template('home.html')
+	
+@app.route('/profile', methods = ['GET', 'POST'])
+def home():
+	if 'loggedin' not in session:
+		return redirect(url_for('login'))
+	else:
+		return render_template('profile.html')
+	
+@app.route('/orders', methods = ['GET', 'POST'])
+def home():
+	if 'loggedin' not in session:
+		return redirect(url_for('login'))
+	else:
+		return render_template('orders.html')
+	
+@app.route('/search', methods = ['GET', 'POST'])
+def home():
+	if 'loggedin' not in session:
+		return redirect(url_for('login'))
+	else:
+		return render_template('search.html')
+
+@app.route('/book/<book_id>', methods = ['GET', 'POST'])
+def home():
+	if 'loggedin' not in session:
+		return redirect(url_for('login'))
+	else:
+		return render_template('book.html')
 
 @app.route('/logout')
 def logout():
