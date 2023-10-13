@@ -35,6 +35,8 @@ def login():
 		if account:
 			session['loggedin'] = True
 			session['idUsuario'] = account['id']
+			session['nombre'] = account['nombre']
+			session['apellido'] = account['apellido']
 			session['nombreusuario'] = account['username']
 			session['correo'] = account['correo']
 			if(account['privilegio'] == 2):
@@ -86,9 +88,12 @@ def home():
 			return render_template('homeadmin.html', titulos = home_data)
 		else:
 			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-			#cursor.execute('SELECT (titulo, autor, genero, fecha_publicacion, precio) FROM articulo WHERE genero = (SELECT genero FROM articulo WHERE codigo = (SELECT no_articulo FROM venta WHERE no_cliente = % s LIMIT 1) and cantidad <> 0)', (session['idUsuario'], ))
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE genero = (SELECT genero FROM articulo WHERE codigo = (SELECT no_articulo FROM venta WHERE no_usuario = % s LIMIT 1) and cantidad <> 0 LIMIT 1)', (session['idUsuario'], ))
+			prueba = cursor.fetchall()
 			cursor.execute('SELECT codigo, titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE cantidad > 0')
 			home_data = cursor.fetchall()
+			if prueba:
+				home_data = prueba
 			return render_template('home.html', recomendaciones = home_data)
 	
 @app.route('/profile', methods = ['GET', 'POST'])
@@ -154,24 +159,24 @@ def orders():
 				parameter = request.form['search_for']
 				cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 				if parameter == 'no_venta':
-					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_venta = % s', (value, ))
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_venta = % s ORDER BY no_venta DESC', (value, ))
 				elif parameter == 'titulo':
-					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE titulo = % s', (value, ))
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE titulo = % s ORDER BY no_venta DESC', (value, ))
 				elif parameter == 'fecha_venta':
-					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE fecha_venta = % s', (value, ))
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE fecha_venta = % s ORDER BY no_venta DESC', (value, ))
 				elif parameter == 'metodo_pago':
-					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE metodo_pago = % s', (value, ))
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE metodo_pago = % s ORDER BY no_venta DESC', (value, ))
 				elif parameter == 'no_usuario':
-					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_usuario = % s', (value, ))
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_usuario = % s ORDER BY no_venta DESC', (value, ))
 				elif parameter == 'estado_envio':
-					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE estado_envio = % s', (value, ))
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE estado_envio = % s ORDER BY no_venta DESC', (value, ))
 				search_data = cursor.fetchall()
 				return render_template('ordersadmin.html', ventas = search_data)
 			else:
 				return render_template('ordersadmin.html')
 		else:
 			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-			cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_usuario = % s', (str(session['idUsuario'])))
+			cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_usuario = % s ORDER BY no_venta DESC', (str(session['idUsuario'])))
 			order_data = cursor.fetchall()
 			return render_template('orders.html', ventas = order_data)
 	
@@ -328,6 +333,8 @@ def logout():
 	session.pop('loggedin', None)
 	session.pop('idusuario', None)
 	session.pop('nombreusuario', None)
+	session.pop('nombre', None)
+	session.pop('apellido', None)
 	session.pop('correo', None)
 	session.pop('admin', None)
 	return redirect(url_for('login'))
