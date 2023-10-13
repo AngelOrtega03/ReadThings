@@ -76,8 +76,8 @@ def home():
 		return redirect(url_for('login'))
 	else:
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-		#cursor.execute('SELECT (titulo, autor, genero, fecha_publicacion, precio) FROM articulo WHERE genero = (SELECT genero FROM articulo WHERE codigo = (SELECT no_articulo FROM venta WHERE no_cliente = % s LIMIT 1))', (session['idUsuario'], ))
-		cursor.execute('SELECT codigo, titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo')
+		#cursor.execute('SELECT (titulo, autor, genero, fecha_publicacion, precio) FROM articulo WHERE genero = (SELECT genero FROM articulo WHERE codigo = (SELECT no_articulo FROM venta WHERE no_cliente = % s LIMIT 1) and cantidad <> 0)', (session['idUsuario'], ))
+		cursor.execute('SELECT codigo, titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE cantidad > 0')
 		home_data = cursor.fetchall()
 		return render_template('home.html', recomendaciones = home_data)
 	
@@ -156,13 +156,13 @@ def searching():
 		print(value)
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 		if parameter == 'titulo':
-			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario, codigo FROM articulo WHERE titulo = % s', (value, ))
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario, codigo FROM articulo WHERE titulo = % s and cantidad > 0', (value, ))
 		elif parameter == 'autor':
-			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario, codigo FROM articulo WHERE autor = % s', (value, ))
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario, codigo FROM articulo WHERE autor = % s and cantidad > 0', (value, ))
 		elif parameter == 'genero':
-			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario, codigo FROM articulo WHERE genero = % s', (value, ))
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario, codigo FROM articulo WHERE genero = % s and cantidad > 0', (value, ))
 		elif parameter == 'codigo':
-			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario, codigo FROM articulo WHERE codigo = % s', (value, ))
+			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario, codigo FROM articulo WHERE codigo = % s and cantidad > 0', (value, ))
 		search_data = cursor.fetchall()
 		return render_template('search.html', busqueda = search_data)
 
@@ -172,15 +172,20 @@ def book(book_id):
 	cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, fecha_ingreso, precio_unitario, cantidad, codigo FROM articulo WHERE codigo = % s', (book_id, ))
 	book_data = cursor.fetchone()
 	if book_data:
-		session['bookCantidad'] = book_data['cantidad']
-		session['bookId'] = book_data['codigo']
-		print(session['bookCantidad'])
-		print(session['bookId'])
+		if book_data['cantidad'] <= 0:
+			return redirect(url_for('inicio'))
+		else:
+			session['bookCantidad'] = book_data['cantidad']
+			session['bookId'] = book_data['codigo']
+			print(session['bookCantidad'])
+			print(session['bookId'])
 	return render_template('book.html', info = book_data)
 
 @app.route('/payment', methods = ['GET', 'POST'])
 def payment():
-	if request.method == "POST" and 'Cantidad' in request.form and "metodo_pago" in request.form and "tipo_envio" in request.form:
+	if 'loggedin' not in session:
+		return redirect(url_for('login'))
+	elif request.method == "POST" and 'Cantidad' in request.form and "metodo_pago" in request.form and "tipo_envio" in request.form:
 		cantidad = request.form['Cantidad']
 		metodo_pago = request.form['metodo_pago']
 		envio = request.form['tipo_envio']
