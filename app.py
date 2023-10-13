@@ -136,7 +136,7 @@ def orders():
 		return redirect(url_for('login'))
 	else:
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-		cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total FROM ventaarticulo WHERE no_usuario = % s', (str(session['idUsuario'])))
+		cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_usuario = % s', (str(session['idUsuario'])))
 		order_data = cursor.fetchall()
 		return render_template('orders.html', ventas = order_data)
 	
@@ -171,7 +171,31 @@ def book(book_id):
 	cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 	cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, fecha_ingreso, precio_unitario, cantidad, codigo FROM articulo WHERE codigo = % s', (book_id, ))
 	book_data = cursor.fetchone()
+	if book_data:
+		session['bookCantidad'] = book_data['cantidad']
+		session['bookId'] = book_data['codigo']
+		print(session['bookCantidad'])
+		print(session['bookId'])
 	return render_template('book.html', info = book_data)
+
+@app.route('/payment', methods = ['GET', 'POST'])
+def payment():
+	if request.method == "POST" and 'Cantidad' in request.form and "metodo_pago" in request.form and "tipo_envio" in request.form:
+		cantidad = request.form['Cantidad']
+		metodo_pago = request.form['metodo_pago']
+		envio = request.form['tipo_envio']
+		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+		cantidad_t = session.get('bookCantidad')
+		book_id = session.get('bookId')
+		if(int(cantidad) > cantidad_t):
+			diferencia = cantidad_t - int(cantidad)
+			cursor.execute('INSERT INTO venta (no_usuario, no_articulo, cantidad, metodo_pago, envio, estado_envio) VALUES (% s, % s, % s, % s, % s, % s)',(str(session['idUsuario']), book_id, cantidad_t, metodo_pago, envio, 'LISTO PARA LLEGAR', ))
+			mysql.connection.commit()
+			cursor.execute('INSERT INTO venta (no_usuario, no_articulo, cantidad, metodo_pago, envio) VALUES (% s, % s, % s, % s, % s)',(str(session['idUsuario']), book_id, abs(diferencia), metodo_pago, envio, ))
+		else:
+			cursor.execute('INSERT INTO venta (no_usuario, no_articulo, cantidad, metodo_pago, envio, estado_envio) VALUES (% s, % s, % s, % s, % s, % s)',(str(session['idUsuario']), book_id, cantidad, metodo_pago, envio, 'LISTO PARA LLEGAR', ))
+		mysql.connection.commit()
+	return redirect(url_for('orders'))
 
 @app.route('/logout')
 def logout():

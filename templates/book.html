@@ -26,7 +26,26 @@
         <p>Fecha de ingreso: {{ info.fecha_publicacion }}</p>
         <p>Cantidad: {{ info.cantidad }}</p>
         <p>Precio: ${{ info.precio_unitario }}</p>
-        <img src="../static/img/products/{{ info.codigo }}.jpg" style="max-width: 80px; max-height: 80px;">
+        <center><img src="../static/img/products/{{ info.codigo }}.jpg"></center>
+        <form class="payment" action="{{ url_for('payment') }}" method="POST">
+            <label for="Cantidad">¿Cuantos ejemplares?</label>
+            <input type="number" id="Cantidad" name="Cantidad" min="1" max="100"><br>
+            <br><br><p>Metodo de pago</p>
+            <input type="radio" id="tarjetaC" name="metodo_pago" value="Tarjeta de credito" required>
+            <label for="tarjeta">Tarjeta de credito</label><br>
+            <input type="radio" id="tarjetaD" name="metodo_pago" value="Tarjeta de debito" required>
+            <label for="tarjetaD">Tarjeta de debito</label><br>
+            <input type="radio" id="cheque" name="metodo_pago" value="Cheque" required>
+            <label for="cheque">Cheque</label>
+            <br><br><p>Tipo de envio</p>
+            <input type="radio" id="dhl" name="tipo_envio" value="DHL" required>
+            <label for="dhl">DHL</label><br>
+            <input type="radio" id="fedex" name="tipo_envio" value="FedEx" required>
+            <label for="fedex">FedEx</label><br>
+            <input type="radio" id="ups" name="tipo_envio" value="UPS" required>
+            <label for="ups">UPS</label><br>
+            <br><input type="submit" id="Comprar" name="Comprar" value="Comprar">
+        </form>
     </div><br>
 </body>
 </html>

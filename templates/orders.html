@@ -26,6 +26,9 @@
         <p>Fecha de orden: {{ venta.fecha_venta }}</p>
         <p>Cantidad: {{ venta.cantidad }}</p>
         <p>Total: ${{ venta.total }}</p>
+        <br><p>Metodo de pago: {{ venta.metodo_pago }}</p>
+        <p>Envio por: {{ venta.envio }}</p>
+        <p>Estado de envio: {{ venta.estado_envio }}</p>
     </div><br>
 {% endfor %}
 </body>
