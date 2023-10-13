@@ -192,8 +192,15 @@ def payment():
 			cursor.execute('INSERT INTO venta (no_usuario, no_articulo, cantidad, metodo_pago, envio, estado_envio) VALUES (% s, % s, % s, % s, % s, % s)',(str(session['idUsuario']), book_id, cantidad_t, metodo_pago, envio, 'LISTO PARA LLEGAR', ))
 			mysql.connection.commit()
 			cursor.execute('INSERT INTO venta (no_usuario, no_articulo, cantidad, metodo_pago, envio) VALUES (% s, % s, % s, % s, % s)',(str(session['idUsuario']), book_id, abs(diferencia), metodo_pago, envio, ))
+			mysql.connection.commit()
+			cursor.execute('UPDATE articulo SET cantidad = % s WHERE codigo = % s', (0, book_id, ))
+		elif cantidad_t == 0:
+			cursor.execute('INSERT INTO venta (no_usuario, no_articulo, cantidad, metodo_pago, envio) VALUES (% s, % s, % s, % s, % s)',(str(session['idUsuario']), book_id, abs(diferencia), metodo_pago, envio, ))
 		else:
-			cursor.execute('INSERT INTO venta (no_usuario, no_articulo, cantidad, metodo_pago, envio, estado_envio) VALUES (% s, % s, % s, % s, % s, % s)',(str(session['idUsuario']), book_id, cantidad, metodo_pago, envio, 'LISTO PARA LLEGAR', ))
+			diferencia = cantidad_t - int(cantidad)
+			cursor.execute('INSERT INTO venta (no_usuario, no_articulo, cantidad, metodo_pago, envio, estado_envio) VALUES (% s, % s, % s, % s, % s, % s)',(str(session['idUsuario']), book_id, int(cantidad), metodo_pago, envio, 'LISTO PARA LLEGAR', ))
+			mysql.connection.commit()
+			cursor.execute('UPDATE articulo SET cantidad = % s WHERE codigo = % s', (diferencia, book_id, ))
 		mysql.connection.commit()
 	return redirect(url_for('orders'))
 
