@@ -149,7 +149,7 @@ def orders():
 		return redirect(url_for('login'))
 	else:
 		if 'admin' in session:
-			if request.method == 'POST' and 'Searchbar' in request.method and 'search_for' in request.form:
+			if request.method == 'POST' and 'Searchbar' in request.form and 'search_for' in request.form:
 				value = request.form['Searchbar']
 				parameter = request.form['search_for']
 				cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -166,12 +166,14 @@ def orders():
 				elif parameter == 'estado_envio':
 					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE estado_envio = % s', (value, ))
 				search_data = cursor.fetchall()
-			return render_template('ordersadmin.html', ventas = search_data)
+				return render_template('ordersadmin.html', ventas = search_data)
+			else:
+				return render_template('ordersadmin.html')
 		else:
 			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 			cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_usuario = % s', (str(session['idUsuario'])))
 			order_data = cursor.fetchall()
-		return render_template('orders.html', ventas = order_data)
+			return render_template('orders.html', ventas = order_data)
 	
 @app.route('/search', methods = ['GET', 'POST'])
 def search():
@@ -184,7 +186,7 @@ def search():
 			return render_template('search.html')
 
 @app.route('/paymentadmin', methods = ['GET', 'POST'])
-def paymentadmin():
+def paymentadmin(msg = ''):
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
@@ -194,7 +196,7 @@ def paymentadmin():
 			articulos_nombre = cursor.fetchall()
 			cursor.execute('SELECT no_compra, no_articulo, nombre_articulo, cantidad, nombre_proveedor, fecha_compra FROM proveedorcompras')
 			compras = cursor.fetchall()
-			return render_template('paymentsadmin.html', articulos_nombre = articulos_nombre, compras = compras)
+			return render_template('paymentsadmin.html', msg = msg, articulos_nombre = articulos_nombre, compras = compras)
 		else:
 			return redirect(url_for('inicio'))
 
@@ -202,25 +204,29 @@ def paymentadmin():
 def paymentproduct():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
-	else:
-		if 'admin' in session:
-			if request.method == 'POST' and 'book_name' in request.form and 'provider' in request.form and 'quantity' in request.form:
-				book_name = request.form['book_name']
-				provider = request.form['provider']
-				quantity = request.form['quantity']
-				cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-				cursor.execute('SELECT codigo, cantidad FROM articulo WHERE titulo = % s', (book_name, ))
-				book_id = cursor.fetchone()
-				cantidadtotal = book_id['cantidad'] + quantity
-				cursor.execute('INSERT INTO comprasaproveedor (no_articulo, no_proveedor, cantidad) VALUES (% s, % s, % s)', (book_id, provider, quantity, ))
-				mysql.connection.commit()
-				cursor.execute('UPDATE articulo SET cantidad = % s WHERE codigo = % s', (cantidadtotal, book_id, ))
-				mysql.connection.commit()
-			return redirect(url_for('paymentadmin'))
-		else:
-			return redirect(url_for('inicio'))
+	elif 'admin' in session and request.method == 'POST' and 'book_name' in request.form and 'provider' in request.form and 'quantity' in request.form:
+		msg = ''
+		book_name = request.form['book_name']
+		provider = request.form['provider']
+		quantity = request.form['quantity']
+		print(book_name)
+		print(provider)
+		print(quantity)
+		print('Hola')
+		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+		cursor.execute('SELECT codigo, cantidad FROM articulo WHERE titulo = % s', (book_name, ))
+		book_id = cursor.fetchone()
+		print(book_id)
+		cantidadtotal = int(book_id['cantidad']) + int(quantity)
+		print(cantidadtotal)
+		cursor.execute('INSERT INTO comprasaproveedor (no_articulo, no_proveedor, cantidad) VALUES (% s, % s, % s)', (book_id['codigo'], provider, quantity, ))
+		mysql.connection.commit()
+		cursor.execute('UPDATE articulo SET cantidad = % s WHERE codigo = % s', (cantidadtotal, book_id['codigo'], ))
+		mysql.connection.commit()
+		msg = 'Compra realizada !'
+	return redirect(url_for('paymentadmin', msg = msg))
 		
-@app.route('/registerproduct')
+@app.route('/registerproduct', methods = ['GET', 'POST'])
 def registerproduct():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
@@ -247,7 +253,7 @@ def registerproduct():
 					cursor.execute('INSERT INTO articulo (codigo, titulo, autor, genero, fecha_publicacion, precio_unitario) VALUES (% s, % s, % s, % s, % s, % s)', (isbn, book_name, autor, genero, fecha_publicacion, precio, ))
 					mysql.connection.commit()
 					msg = 'Producto registrado exitosamente !'
-			return render_template('paymentsadmin.html', msg = msg)
+			return redirect(url_for('paymentadmin', msg = msg))
 
 @app.route('/searching', methods = ['POST'])
 def searching():

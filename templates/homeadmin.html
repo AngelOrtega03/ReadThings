@@ -14,13 +14,13 @@
             <li><a href="{{ url_for('home') }}">Inicio</a></li>
             <li><a href="{{ url_for('search') }}">Buscar</a></li>
             <li><a href="{{ url_for('orders') }}">Ordenes</a></li>
-            <li><a href="{{ url_for('orders') }}">Agregar producto</a></li>
+            <li><a href="{{ url_for('paymentadmin') }}">Producto</a></li>
             <li><a href="{{ url_for('profile') }}">Perfil</a></li>
             <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
         </ul>
     </nav>
     <br><br><br><h1>Recomendaciones</h1>
-    {% for libro in recomendaciones %}
+    {% for libro in titulos %}
     <a href="{{ url_for('book', book_id = libro.codigo)}}"><div class="Publicacion">
         <p>Titulo: {{ libro.titulo }}</p>
         <p>Autor: {{ libro.autor }}</p>

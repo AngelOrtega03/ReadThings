@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Carrito de compras</title>
+    <title>Productos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles2.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles3.css') }}">
 </head>
 <body>
 <nav>
@@ -14,21 +15,83 @@
         <li><a href="{{ url_for('home') }}">Inicio</a></li>
         <li><a href="{{ url_for('search') }}">Buscar</a></li>
         <li><a href="{{ url_for('orders') }}">Ordenes</a></li>
+        <li><a href="{{ url_for('paymentadmin') }}">Producto</a></li>
         <li><a href="{{ url_for('profile') }}">Perfil</a></li>
         <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
     </ul>
 </nav><br><br><br>
-<h1>Ordenes</h1>
-{% for venta in ventas %}
+<div class="contaiener">
+<div class="title">Compra a proveedor</div>
+    <div>{{ msg }}</div>
+    <form action="{{ url_for('paymentproduct') }}" method="POST" >
+        <div class="user-details">
+            <input list="book_name" name="book_name" required>
+            <datalist id="book_name">
+                {% for nombre in articulos_nombre %}
+                <option value="{{ nombre.titulo }}">
+                {% endfor %}
+            </datalist>
+            <div class="input-box">
+                <input type="radio" id="stone_ocean" name="provider" value="1" required>
+                <label for="stone_ocean">Stone Ocean</label><br>
+                <input type="radio" id="sega" name="provider" value="2" required>
+                <label for="sega">SEGA Holdings</label><br>
+                <input type="radio" id="nostrafort" name="provider" value="3" required>
+                <label for="nostrafort">Nostrafort</label><br>
+            </div>
+            <div class="input-box">
+                <span clas="details">Cantidad</span>
+                <input type="text" name="quantity" required>
+            </div>
+        </div>
+        <div class="boton1">
+            <input type="submit" name="" value="Confirmar">
+        </div>
+    </form>
+</div>
+<div class="contaiener">
+    <div class="title">Registro de producto</div>
+    <form action="{{ url_for('registerproduct') }}" method="POST" >
+        <div class="user-details">
+            <div class="input-box">
+                <span clas="details">ISBN</span>
+                <input type="text" name="isbn" required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Titulo</span>
+                <input type="text" name="book_name_1" required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Autor</span>
+                <input type="text" name="autor" required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Genero</span>
+                <input type="text" name="genero" required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Fecha de publicacion</span>
+                <input type="text" name="fecha_publicacion" required>
+            </div>
+            <div class="input-box">
+                <span clas="details">Precio unitario</span>
+                <input type="text" name="precio_unitario" required>
+            </div>
+        </div>
+        <div class="boton1">
+            <input type="submit" name="" value="Confirmar">
+        </div>
+    </form>
+</div>
+<h1>Compras a proveedor</h1>
+{% for compra in compras %}
     <div class="Publicacion">
-        <p>No. Orden: {{ venta.no_venta }}</p>
-        <p>Titulo: {{ venta.titulo }}</p>
-        <p>Fecha de orden: {{ venta.fecha_venta }}</p>
-        <p>Cantidad: {{ venta.cantidad }}</p>
-        <p>Total: ${{ venta.total }}</p>
-        <br><p>Metodo de pago: {{ venta.metodo_pago }}</p>
-        <p>Envio por: {{ venta.envio }}</p>
-        <p>Estado de envio: {{ venta.estado_envio }}</p>
+        <p>No. Compra: {{ compra.no_compra }}</p>
+        <p>ISBN: {{ compra.no_articulo }}</p>
+        <p>Titulo: {{ compra.nombre_articulo }}</p>
+        <p>Cantidad: {{ compra.cantidad }}</p>
+        <p>Nombre de proveedor: {{ compra.nombre_proveedor }}</p>
+        <br><p>Fecha de compra: {{ compra.fecha_compra }}</p>
     </div><br>
 {% endfor %}
 </body>

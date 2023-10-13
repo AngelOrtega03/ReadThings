@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Carrito de compras</title>
+    <title>Ordenes</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles2.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles4.css') }}">
 </head>
 <body>
 <nav>
@@ -14,10 +15,27 @@
         <li><a href="{{ url_for('home') }}">Inicio</a></li>
         <li><a href="{{ url_for('search') }}">Buscar</a></li>
         <li><a href="{{ url_for('orders') }}">Ordenes</a></li>
+        <li><a href="{{ url_for('paymentadmin') }}">Producto</a></li>
         <li><a href="{{ url_for('profile') }}">Perfil</a></li>
         <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
     </ul>
 </nav><br><br><br>
+<center><form action="{{ url_for('orders') }}" method = 'POST'>
+    <input id="Search" name="Searchbar" type="text" placeholder="¿Que desea buscar?" class="textbox" required>
+    <input type="radio" id="no_venta" name="search_for" value="no_venta" required>
+    <label for="no_venta">No. venta</label><br>
+    <input type="radio" id="titulo" name="search_for" value="titulo" required>
+    <label for="titulo">Titulo</label><br>
+    <input type="radio" id="fecha_venta" name="search_for" value="fecha_venta" required>
+    <label for="fecha_venta">Fecha de venta</label><br>
+    <input type="radio" id="metodo_pago" name="search_for" value="metodo_pago" required>
+    <label for="metodo_pago">Metodo de pago</label><br>
+    <input type="radio" id="no_usuario" name="search_for" value="no_usuario" required>
+    <label for="no_usuario">No. de usuario</label><br>
+    <input type="radio" id="estado_envio" name="search_for" value="estado_envio" required>
+    <label for="estado_envio">Estado de envio</label><br>
+    <input type="submit" name="" value="Buscar">
+</form></center>
 <h1>Ordenes</h1>
 {% for venta in ventas %}
     <div class="Publicacion">
