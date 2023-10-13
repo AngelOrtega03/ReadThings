@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Inicio de campeones :D</title>
+    <title>Buscar</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles2.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles4.css') }}">
 </head>
 <body>
     <nav>
@@ -14,20 +15,30 @@
             <li><a href="{{ url_for('home') }}">Inicio</a></li>
             <li><a href="{{ url_for('search') }}">Buscar</a></li>
             <li><a href="{{ url_for('orders') }}">Ordenes</a></li>
-            <li><a href="{{ url_for('orders') }}">Agregar producto</a></li>
             <li><a href="{{ url_for('profile') }}">Perfil</a></li>
             <li><a href="{{ url_for('logout') }}">Cerrar Sesion</a></li>
         </ul>
     </nav>
-    <br><br><br><h1>Recomendaciones</h1>
-    {% for libro in recomendaciones %}
+    <br><br><br><br><br><form action="{{ url_for('searching') }}" method="POST">
+        <input id="Search" name="Searchbar" type="text" placeholder="¿Que desea buscar?" class="textbox" required>
+        <input type="radio" id="titulo" name="search_for" value="titulo" required>
+        <label for="titulo">Titulo</label><br>
+        <input type="radio" id="autor" name="search_for" value="autor" required>
+        <label for="autor">Autor</label><br>
+        <input type="radio" id="genero" name="search_for" value="genero" required>
+        <label for="genero">Genero</label><br>
+        <input type="radio" id="isbn" name="search_for" value="codigo" required>
+        <label for="isbn">ISBN</label><br>
+        <input type="submit" name="" value="Buscar">
+    </form><br>
+    {% for libro in busqueda %}
     <a href="{{ url_for('book', book_id = libro.codigo)}}"><div class="Publicacion">
         <p>Titulo: {{ libro.titulo }}</p>
         <p>Autor: {{ libro.autor }}</p>
         <p>Genero: {{ libro.genero }}</p>
         <p>Año de publicacion: {{ libro.fecha_publicacion }}</p>
-        <p>Precio: ${{ libro.precio_unitario }}</p>
-    </div><br></a>
+        <p>Precio: ${{ libro.precio_unitario }}</p></a>
+    </div><br>
     {% endfor %}
 </body>
 </html>

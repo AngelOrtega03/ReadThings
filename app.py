@@ -71,12 +71,7 @@ def register():
 	return render_template('register.html', msg = msg)
 
 #Funciones usuario admin
-@app.route('/homeadmin', methods = ['GET', 'POST'])
-def homeadmin():
-	if 'loggedin' not in session and 'admin' not in session:
-		return redirect(url_for('login'))
-	else:
-		
+
 
 #Funciones usuario comun
 @app.route('/home', methods = ['GET', 'POST'])
@@ -84,11 +79,17 @@ def home():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
-		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-		#cursor.execute('SELECT (titulo, autor, genero, fecha_publicacion, precio) FROM articulo WHERE genero = (SELECT genero FROM articulo WHERE codigo = (SELECT no_articulo FROM venta WHERE no_cliente = % s LIMIT 1) and cantidad <> 0)', (session['idUsuario'], ))
-		cursor.execute('SELECT codigo, titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE cantidad > 0')
-		home_data = cursor.fetchall()
-		return render_template('home.html', recomendaciones = home_data)
+		if 'admin' in session:
+			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+			cursor.execute('SELECT codigo, titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo')
+			home_data = cursor.fetchall()
+			return render_template('homeadmin.html', titulos = home_data)
+		else:
+			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+			#cursor.execute('SELECT (titulo, autor, genero, fecha_publicacion, precio) FROM articulo WHERE genero = (SELECT genero FROM articulo WHERE codigo = (SELECT no_articulo FROM venta WHERE no_cliente = % s LIMIT 1) and cantidad <> 0)', (session['idUsuario'], ))
+			cursor.execute('SELECT codigo, titulo, autor, genero, fecha_publicacion, precio_unitario FROM articulo WHERE cantidad > 0')
+			home_data = cursor.fetchall()
+			return render_template('home.html', recomendaciones = home_data)
 	
 @app.route('/profile', methods = ['GET', 'POST'])
 def profile():
@@ -137,16 +138,39 @@ def profile():
 				session['nombreusuario'] = nombreusuario
 		elif request.method == 'POST':
 			msg = 'No ha puesto nada para cambiar !'
-		return render_template('profile.html', msg = msg)
+		if 'admin' in session:
+			return render_template('profileadmin.html', msg = msg)
+		else:
+			return render_template('profile.html', msg = msg)
 	
 @app.route('/orders', methods = ['GET', 'POST'])
 def orders():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
-		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-		cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_usuario = % s', (str(session['idUsuario'])))
-		order_data = cursor.fetchall()
+		if 'admin' in session:
+			if request.method == 'POST' and 'Searchbar' in request.method and 'search_for' in request.form:
+				value = request.form['Searchbar']
+				parameter = request.form['search_for']
+				cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+				if parameter == 'no_venta':
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_venta = % s', (value, ))
+				elif parameter == 'titulo':
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE titulo = % s', (value, ))
+				elif parameter == 'fecha_venta':
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE fecha_venta = % s', (value, ))
+				elif parameter == 'metodo_pago':
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE metodo_pago = % s', (value, ))
+				elif parameter == 'no_usuario':
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_usuario = % s', (value, ))
+				elif parameter == 'estado_envio':
+					cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE estado_envio = % s', (value, ))
+				search_data = cursor.fetchall()
+			return render_template('ordersadmin.html', ventas = search_data)
+		else:
+			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+			cursor.execute('SELECT no_venta, titulo, fecha_venta, cantidad, total, metodo_pago, envio, estado_envio FROM ventaarticulo WHERE no_usuario = % s', (str(session['idUsuario'])))
+			order_data = cursor.fetchall()
 		return render_template('orders.html', ventas = order_data)
 	
 @app.route('/search', methods = ['GET', 'POST'])
@@ -154,8 +178,77 @@ def search():
 	if 'loggedin' not in session:
 		return redirect(url_for('login'))
 	else:
-		return render_template('search.html')
+		if 'admin' in session:
+			return render_template('searchadmin.html')
+		else:
+			return render_template('search.html')
+
+@app.route('/paymentadmin', methods = ['GET', 'POST'])
+def paymentadmin():
+	if 'loggedin' not in session:
+		return redirect(url_for('login'))
+	else:
+		if 'admin' in session:
+			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+			cursor.execute('SELECT titulo, codigo FROM articulo')
+			articulos_nombre = cursor.fetchall()
+			cursor.execute('SELECT no_compra, no_articulo, nombre_articulo, cantidad, nombre_proveedor, fecha_compra FROM proveedorcompras')
+			compras = cursor.fetchall()
+			return render_template('paymentsadmin.html', articulos_nombre = articulos_nombre, compras = compras)
+		else:
+			return redirect(url_for('inicio'))
+
+@app.route('/paymentproduct', methods = ['GET', 'POST'])
+def paymentproduct():
+	if 'loggedin' not in session:
+		return redirect(url_for('login'))
+	else:
+		if 'admin' in session:
+			if request.method == 'POST' and 'book_name' in request.form and 'provider' in request.form and 'quantity' in request.form:
+				book_name = request.form['book_name']
+				provider = request.form['provider']
+				quantity = request.form['quantity']
+				cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+				cursor.execute('SELECT codigo, cantidad FROM articulo WHERE titulo = % s', (book_name, ))
+				book_id = cursor.fetchone()
+				cantidadtotal = book_id['cantidad'] + quantity
+				cursor.execute('INSERT INTO comprasaproveedor (no_articulo, no_proveedor, cantidad) VALUES (% s, % s, % s)', (book_id, provider, quantity, ))
+				mysql.connection.commit()
+				cursor.execute('UPDATE articulo SET cantidad = % s WHERE codigo = % s', (cantidadtotal, book_id, ))
+				mysql.connection.commit()
+			return redirect(url_for('paymentadmin'))
+		else:
+			return redirect(url_for('inicio'))
 		
+@app.route('/registerproduct')
+def registerproduct():
+	if 'loggedin' not in session:
+		return redirect(url_for('login'))
+	else:
+		if 'admin' in session:
+			msg = ''
+			if request.method == 'POST' and 'isbn' in request.form and 'book_name_1' in request.form and 'autor' in request.form and 'genero' in request.form and 'fecha_publicacion' in request.form and 'precio_unitario' in request.form:
+				isbn = request.form['isbn']
+				book_name = request.form['book_name_1']
+				autor = request.form['autor']
+				genero = request.form['genero']
+				fecha_publicacion = request.form['fecha_publicacion']
+				precio = request.form['precio_unitario']
+				cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+				cursor.execute('SELECT * FROM articulo WHERE codigo = % s', (isbn, ))
+				account1 = cursor.fetchone()
+				cursor.execute('SELECT * FROM articulo WHERE titulo = % s', (book_name, ))
+				account2 = cursor.fetchone()
+				if account1:
+					msg = 'ISBN ya existente !'
+				elif account2:
+					msg = 'Nombre ya existente !'
+				else:
+					cursor.execute('INSERT INTO articulo (codigo, titulo, autor, genero, fecha_publicacion, precio_unitario) VALUES (% s, % s, % s, % s, % s, % s)', (isbn, book_name, autor, genero, fecha_publicacion, precio, ))
+					mysql.connection.commit()
+					msg = 'Producto registrado exitosamente !'
+			return render_template('paymentsadmin.html', msg = msg)
+
 @app.route('/searching', methods = ['POST'])
 def searching():
 	if request.method == 'POST' and 'Searchbar' in request.form and 'search_for' in request.form:
@@ -173,7 +266,10 @@ def searching():
 		elif parameter == 'codigo':
 			cursor.execute('SELECT titulo, autor, genero, fecha_publicacion, precio_unitario, codigo FROM articulo WHERE codigo = % s and cantidad > 0', (value, ))
 		search_data = cursor.fetchall()
-		return render_template('search.html', busqueda = search_data)
+		if 'admin' in session:
+			return render_template('searchadmin.html', busqueda = search_data)
+		else:
+			return render_template('search.html', busqueda = search_data)
 
 @app.route('/book/<book_id>', methods = ['GET', 'POST'])
 def book(book_id):
@@ -188,7 +284,10 @@ def book(book_id):
 			session['bookId'] = book_data['codigo']
 			print(session['bookCantidad'])
 			print(session['bookId'])
-	return render_template('book.html', info = book_data)
+	if 'admin' in session:
+		return render_template('bookadmin.html', info = book_data)
+	else:
+		return render_template('book.html', info = book_data)
 
 @app.route('/payment', methods = ['GET', 'POST'])
 def payment():
