@@ -70,6 +70,15 @@ def register():
 			msg = 'Registro exitoso !'
 	return render_template('register.html', msg = msg)
 
+#Funciones usuario admin
+@app.route('/homeadmin', methods = ['GET', 'POST'])
+def homeadmin():
+	if 'loggedin' not in session and 'admin' not in session:
+		return redirect(url_for('login'))
+	else:
+		
+
+#Funciones usuario comun
 @app.route('/home', methods = ['GET', 'POST'])
 def home():
 	if 'loggedin' not in session:
